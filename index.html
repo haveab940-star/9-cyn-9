@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логикалық амалдар — Интерактивті тест (9-сынып)</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --success: #2ec4b6;
+            --danger: #e63946;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #2b2d42;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1d3557;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f1f3f5;
+            border: 2px solid transparent;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e9ecef;
+            border-color: var(--primary);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #721c24;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #eef2ff;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .score-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .score-title {
+            font-size: 1.5rem;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .reset-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .reset-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Логикалық амалдар</h1>
+    <p class="subtitle">9-сынып Информатика | Интерактивті тест</p>
+
+    <div id="quiz"></div>
+
+    <div id="score" class="score-container">
+        <div class="score-title" id="score-text"></div>
+        <p id="score-desc"></p>
+    </div>
+
+    <button class="reset-btn" onclick="resetQuiz()">Қайта тапсыру</button>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "1. Логикалық көбейту (және) амалы қалай аталады және оның таңбасы қандай?",
+            options: [
+                "Дизъюнкция (∨)",
+                "Инверсия (¬)",
+                "Конъюнкция (∧ немесе ·)",
+                "Импликация (→)"
+            ],
+            answer: 2,
+            explanation: "<b>Түсіндірме:</b> Дұрыс жауап — <b>Конъюнкция</b> (және, AND). Дизъюнкция — бұл логикалық қосу (немесе), ал Инверсия — логикалық терістеу (ЕМЕС) болып табылады."
+        },
+        {
+            q: "2. Төмендегілердің қайсысы логикалық терістеу (инверсия) амалын дұрыс сипаттайды?",
+            options: [
+                "Тек екі пікір де ақиқат болғанда 1 береді",
+                "Пікірдің мәнін қарама-қарсы мәнге өзгертеді (1-ді 0-ге, 0-ді 1-ге)",
+                "Екі мән бірдей болғанда 0 береді",
+                "Ең болмағанда бір пікір ақиқат болса 1 береді"
+            ],
+            answer: 1,
+            explanation: "<b>Түсіндірме:</b> Инверсия (NOT, EМЕС) — жалғыз айнымалыға қолданылатын амал. Ол 1 (ақиқат) мәнін 0-ге (жалған), ал 0-ді 1-ге айналдырады."
+        },
+        {
+            q: "3. Шектеуші НЕМЕСЕ (XOR) амалының ақиқат болу шарты қандай?",
+            options: [
+                "Кіріс мәндері әртүрлі болғанда (біреуі 1, екіншісі 0) нәтиже 1 болады",
+                "Екі мән де 1 болғанда нәтиже 1 болады",
+                "Екі мән де 0 болғанда нәтиже 1 болады",
+                "Кіріс мәндері бірдей болғанда нәтиже 1 болады"
+            ],
+            answer: 0,
+            explanation: "<b>Түсіндірме:</b> XOR (Strict OR) амалы кіріс мәндері <b>әр түрлі</b> болғанда ғана 1 береді. Егер екі мән де 1 немесе екеуі де 0 болса, XOR нәтижесі 0 болады."
+        },
+        {
+            q: "4. A = 1 және B = 0 болғанда, дизъюнкция (A ∨ B) нәтижесі неге тең?",
+            options: [
+                "0",
+                "1",
+                "Анықталмайды",
+                "-1"
+            ],
+            answer: 1,
+            explanation: "<b>Түсіндірме:</b> Дизъюнкция — логикалық қосу (НЕМЕСЕ). Нәтиже ақиқат (1) болуы үшін кем дегенде бір айнымалы 1 болуы жеткілікті. Мұнда A = 1 болғандықтан, нәтиже 1."
+        },
+        {
+            q: "5. Төмендегі сөйлемдердің қайсысы конъюнкция (∧) амалына мысал бола алады?",
+            options: [
+                "Бүгін жаңбыр жауады немесе күн ашық болады",
+                "Егер сабақты оқысаң, жақсы баға аласың",
+                "Бүгін күн ашық ЖӘНЕ температура 20 градус",
+                "Бүгін күн ашық емес"
+            ],
+            answer: 2,
+            explanation: "<b>Түсіндірме:</b> Конъюнкция екі пікірді <b>«ЖӘНЕ»</b> жалғауы арқылы біріктіреді. Тек екі шарт та қатар орындалғанда ғана жалпы пікір ақиқат болады."
+        }
+    ];
+
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function renderQuiz() {
+        const quizContainer = document.getElementById('quiz');
+        quizContainer.innerHTML = '';
+
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.innerText = q.q;
+            card.appendChild(title);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            q.options.forEach((opt, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                
+                if (userAnswers[index] !== null) {
+                    btn.disabled = true;
+                    if (optIndex === q.answer) {
+                        btn.classList.add('correct');
+                    }
+                    if (userAnswers[index] === optIndex && optIndex !== q.answer) {
+                        btn.classList.add('wrong');
+                    }
+                } else {
+                    btn.onclick = () => selectAnswer(index, optIndex);
+                }
+
+                optionsDiv.appendChild(btn);
+            });
+
+            card.appendChild(optionsDiv);
+
+            const exp = document.createElement('div');
+            exp.className = 'explanation';
+            exp.id = `exp-${index}`;
+            exp.innerHTML = q.explanation;
+            if (userAnswers[index] !== null) {
+                exp.style.display = 'block';
+            }
+            card.appendChild(exp);
+
+            quizContainer.appendChild(card);
+        });
+    }
+
+    function selectAnswer(qIndex, optIndex) {
+        userAnswers[qIndex] = optIndex;
+        renderQuiz();
+        checkProgress();
+    }
+
+    function checkProgress() {
+        if (!userAnswers.includes(null)) {
+            let score = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans === questions[i].answer) score++;
+            });
+
+            const scoreContainer = document.getElementById('score');
+            const scoreText = document.getElementById('score-text');
+            const scoreDesc = document.getElementById('score-desc');
+
+            scoreText.innerText = `Нәтижеңіз: ${score} / ${questions.length}`;
+            if (score === questions.length) {
+                scoreDesc.innerText = "Өте жақсы! Тақырыпты толық меңгергенсіз.";
+            } else if (score >= 3) {
+                scoreDesc.innerText = "Жақсы! Түсіндірмелерді оқып, қателеріңізді қайталап шығыңыз.";
+            } else {
+                scoreDesc.innerText = "Қайталау қажет. Түсіндірмелерді мұқият оқып шығыңыз.";
+            }
+
+            scoreContainer.style.display = 'block';
+        }
+    }
+
+    function resetQuiz() {
+        userAnswers = new Array(questions.length).fill(null);
+        document.getElementById('score').style.display = 'none';
+        renderQuiz();
+    }
+
+    // Алғашқы іске қосу
+    renderQuiz();
+</script>
+
+</body>
+</html>
